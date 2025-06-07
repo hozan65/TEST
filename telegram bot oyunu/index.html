@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: blob: 'self' 'unsafe-inline' 'unsafe-eval';">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ChrionToken Slot Spin Oyunu</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap');
+
+    :root {
+      --color-bg: #ffffff;
+      --color-text: #6b7280;
+      --color-primary: #111827;
+      --color-primary-hover: #374151;
+      --color-success: #16a34a; /* green */
+      --color-warning: #ca8a04; /* amber/gold */
+      --color-danger: #dc2626; /* red */
+      --color-energy: #2563eb; /* blue */
+      --color-shadow: rgba(0, 0, 0, 0.05);
+      --border-radius: 0.75rem;
+      --transition-duration: 0.3s;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 4rem 1rem 6rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--color-primary);
+      margin-bottom: 0.25rem;
+      line-height: 1.1;
+    }
+
+    p.lead {
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: var(--color-text);
+      margin-bottom: 3rem;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .slot-machine {
+      display: flex;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .reel {
+      background: #f9fafb;
+      box-shadow: 0 8px 24px var(--color-shadow);
+      border-radius: var(--border-radius);
+      width: 120px;
+      height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow var(--transition-duration);
+    }
+
+    .reel.spinning {
+      animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      box-shadow:
+        0 0 30px 5px rgba(99, 102, 241, 0.4),
+        0 10px 40px var(--color-shadow);
+    }
+
+    @keyframes spin {
+      0% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-200%);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    .spin-button {
+      background-color: var(--color-primary);
+      color: #fff;
+      border: none;
+      outline: none;
+      padding: 1.25rem 3rem;
+      border-radius: var(--border-radius);
+      font-size: 1.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color var(--transition-duration);
+      box-shadow: 0 6px 18px var(--color-shadow);
+      user-select: none;
+    }
+    .spin-button:hover:enabled,
+    .spin-button:focus-visible:enabled {
+      background-color: var(--color-primary-hover);
+    }
+    .spin-button:disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+
+    .result {
+      font-weight: 700;
+      font-size: 1.5rem;
+      min-height: 2em;
+      max-width: 600px;
+      margin: 1.25rem auto 0;
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+    }
+    .result.win {
+      color: var(--color-success);
+      background: #dcfad4;
+      box-shadow: 0 4px 12px #6ee07a44;
+    }
+    .result.partial-win {
+      color: var(--color-warning);
+      background: #fff7cd;
+      box-shadow: 0 4px 12px #facc1511;
+    }
+    .result.loss {
+      color: var(--color-danger);
+      background: #fcdada;
+      box-shadow: 0 4px 12px #f7424244;
+    }
+    .result.energy {
+      color: var(--color-energy);
+      background: #d0e2ff;
+      box-shadow: 0 4px 12px #4f80ff44;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      .slot-machine {
+        gap: 0.75rem;
+      }
+      .reel {
+        width: 90px;
+        height: 90px;
+        font-size: 3rem;
+      }
+      .spin-button {
+        font-size: 1.25rem;
+        padding: 1rem 2rem;
+      }
+      .result {
+        font-size: 1.25rem;
+        padding: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container" role="main" aria-label="ChrionToken Slot Spin Oyunu">
+    <h1>ChrionToken Slot Spin</h1>
+    <p class="lead">Spin yap ve ödülü kazan! Solana, CHRN, Enerji veya Kayıp olabilir.</p>
+
+    <section class="slot-machine" aria-label="Slot makinesi makaraları ve sembolleri">
+      <div class="reel" id="reel1" aria-live="polite" aria-atomic="true" aria-label="Birinci makara">
+        <!-- symbol will appear here -->
+      </div>
+      <div class="reel" id="reel2" aria-live="polite" aria-atomic="true" aria-label="İkinci makara">
+      </div>
+      <div class="reel" id="reel3" aria-live="polite" aria-atomic="true" aria-label="Üçüncü makara">
+      </div>
+    </section>
+
+    <button class="spin-button" id="spinBtn" aria-label="Spin yap">Spin Yap</button>
+
+    <div id="resultMessage" class="result" aria-live="polite" aria-atomic="true"></div>
+  </main>
+
+  <script>
+    (() => {
+      // Define slot symbols with their types and labels
+      const symbols = [
+        {name: 'Solana', emoji: '🟠'},      // Solana token, orange circle
+        {name: 'Gas Pedal', emoji: '🏎️'}, // Gas pedal (race car)
+        {name: 'Handbrake', emoji: '🛑'},  // Handbrake (stop sign)
+        {name: 'Fuel', emoji: '⛽'},        // Fuel pump
+      ];
+
+      // Count symbols for probability: we assume equal probability for simplicity
+      // Rewards logic per counts:
+      // Solana: 3 = 10,000, 2=5,000, 1=1,000
+      // Gas Pedal: 3=5,000 CHRN, 2=2,500 CHRN, 1=500 CHRN
+      // Handbrake: 3 = loss of 5,000 CHRN
+      // Fuel: 3 = 3,000 energy
+   
+      const reels = [
+        document.getElementById('reel1'),
+        document.getElementById('reel2'),
+        document.getElementById('reel3')
+      ];
+      const spinBtn = document.getElementById('spinBtn');
+      const resultMessage = document.getElementById('resultMessage');
+
+      // Utility: get random integer in range
+      function randomInt(max) {
+        return Math.floor(Math.random() * max);
+      }
+
+      // Utility: get random symbol
+      function getRandomSymbol() {
+        return symbols[randomInt(symbols.length)];
+      }
+
+      // Show symbol in reel element
+      function showSymbol(reel, symbol) {
+        reel.textContent = symbol.emoji;
+        reel.setAttribute('aria-label', symbol.name + ' sembolü');
+      }
+
+      // Animate reels spinning by cycling symbols rapidly
+      function startSpinAnimation() {
+        reels.forEach(reel => reel.classList.add('spinning'));
+      }
+      function stopSpinAnimation() {
+        reels.forEach(reel => reel.classList.remove('spinning'));
+      }
+
+      // Spin a single reel for a specified duration then resolve with final symbol
+      function spinReel(reel, duration) {
+        return new Promise(resolve => {
+          const intervalDelay = 80;
+          let intervalId = null;
+          intervalId = setInterval(() => {
+            const randomSym = getRandomSymbol();
+            showSymbol(reel, randomSym);
+          }, intervalDelay);
+          setTimeout(() => {
+            clearInterval(intervalId);
+            const finalSym = getRandomSymbol();
+            showSymbol(reel, finalSym);
+            resolve(finalSym);
+          }, duration);
+        });
+      }
+
+      // Compute reward message and style by analyzing symbol counts
+      function computeReward(results) {
+        // tally counts
+        const counts = {
+          Solana: 0,
+          GasPedal: 0,
+          Handbrake: 0,
+          Fuel: 0
+        };
+        results.forEach(sym => {
+          if (sym.name === 'Solana') counts.Solana++;
+          else if (sym.name === 'Gas Pedal') counts.GasPedal++;
+          else if (sym.name === 'Handbrake') counts.Handbrake++;
+          else if (sym.name === 'Fuel') counts.Fuel++;
+        });
+
+        // Build reward string & css class
+        // Check all conditions in order of priority
+
+        // Handbrake loss (3 times)
+        if (counts.Handbrake === 3) {
+          return {text: '❌ Kayıp: -5.000 CHRN', className: 'loss'};
+        }
+
+        // Solana rewards
+        if (counts.Solana === 3) {
+          return {text: '🎉 Kazandınız: 10.000 Solana!', className: 'win'};
+        }
+        if (counts.Solana === 2) {
+          return {text: '🎉 Kazandınız: 5.000 Solana!', className: 'partial-win'};
+        }
+        if (counts.Solana === 1) {
+          return {text: '🎉 Kazandınız: 1.000 Solana!', className: 'partial-win'};
+        }
+
+        // CHRN rewards (Gas Pedal)
+        if (counts.GasPedal === 3) {
+          return {text: '🎉 Kazandınız: 5.000 CHRN!', className: 'win'};
+        }
+        if (counts.GasPedal === 2) {
+          return {text: '🎉 Kazandınız: 2.500 CHRN!', className: 'partial-win'};
+        }
+        if (counts.GasPedal === 1) {
+          return {text: '🎉 Kazandınız: 500 CHRN!', className: 'partial-win'};
+        }
+
+        // Energy reward
+        if (counts.Fuel === 3) {
+          return {text: '⚡ Kazandınız: 3.000 Enerji!', className: 'energy'};
+        }
+
+        // Otherwise, no reward
+        return {text: 'Tekrar deneyin!', className: ''};
+      }
+
+      // Main spin handler
+      spinBtn.addEventListener('click', async () => {
+        spinBtn.disabled = true;
+        resultMessage.textContent = '';
+        resultMessage.className = 'result';
+
+        startSpinAnimation();
+
+        // Spin reels with staggered durations
+        const delays = [2000, 2300, 2600];
+        const results = [];
+        for (let i = 0; i < reels.length; i++) {
+          results[i] = await spinReel(reels[i], delays[i]);
+        }
+
+        stopSpinAnimation();
+
+        const reward = computeReward(results);
+
+        resultMessage.textContent = reward.text;
+        // Remove previous classes, then add new
+        resultMessage.className = 'result ' + reward.className;
+
+        spinBtn.disabled = false;
+      });
+
+      // Initialize reels with random symbols on load
+      reels.forEach(reel => {
+        showSymbol(reel, getRandomSymbol());
+      });
+    })();
+  </script>
+</body>
+</html>
+
